@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Drive App</title>
+    <script src="package/react.development.js"></script>
+    <script src="package/react-dom.development.js"></script>
+    <script src="package/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            overflow-x: hidden;
+        }
+        
+        .col-10 {
+            background-color: rgb(250, 250, 250);
+            height: 800px;
+        }
+
+        .btn {
+            font-weight: 600;
+            color: white;
+        }
+
+        .btn-light {
+            font-weight: 600;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+        const app = document.getElementById("app");
+        const root = ReactDOM.createRoot(app);
+
+        function Folder() {
+            return (
+                <div className="p-3">
+                    <div className="list-group">
+                        <a href="#" className="list-group-item list-group-item-action list-group-item-warning py-3">Folder</a>
+                    </div>
+                </div>
+            );
+        }
+
+        function File() {
+            return (
+                <div className="p-3">
+                    <div className="list-group">
+                        <div className="row">
+                            <div className="col-1"></div>
+                            <div className="col-11">
+                                <a href="#" className="list-group-item list-group-item-action py-3">File</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function ModalFolder({ folderName, setFolderName, onSave }) {
+            return (
+                <div className="modal fade" id="BuatFolder" tabIndex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="modalLabel">Buat Folder Baru</h5>
+                            </div>
+                            <div className="modal-body">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Nama folder"
+                                    value={folderName}
+                                    onChange={(e) => setFolderName(e.target.value)}
+                                />
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={onSave}>Simpan Folder</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function ModalFile({ fileName, setFileName, onSave }) {
+            return (
+                <div className="modal fade" id="BuatFile" tabIndex="-1" aria-labelledby="modalLabelFile" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="modalLabelFile">Buat File Baru</h5>
+                            </div>
+                            <div className="modal-body">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Nama file"
+                                    value={fileName}
+                                    onChange={(e) => setFileName(e.target.value)}
+                                />
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" className="btn btn-primary" data-bs-dismiss="modal"onClick={onSave}>Simpan File</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function ModalEditFolder({ folderName, setFolderName, onSave }) {
+            return (
+                <div className="modal fade" id="EditFolder" tabIndex="-1" aria-labelledby="editFolderLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="editFolderLabel">Edit Folder</h5>
+                            </div>
+                            <div className="modal-body">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={folderName}
+                                    onChange={(e) => setFolderName(e.target.value)}
+                                />
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={onSave}>Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function ModalEditFile({ fileName, setFileName, onSave }) {
+            return (
+                <div className="modal fade" id="EditFile" tabIndex="-1" aria-labelledby="editFileLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="editFileLabel">Edit File</h5>
+                            </div>
+                            <div className="modal-body">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={fileName}
+                                    onChange={(e) => setFileName(e.target.value)}
+                                />
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={onSave}>Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+
+        function App() {
+            const [folders, setFolders] = React.useState([]);
+            const [folderName, setFolderName] = React.useState("");
+            const [files, setFiles] = React.useState([]);
+            const [fileName, setFileName] = React.useState("");
+
+            const [editFolderIndex, setEditFolderIndex] = React.useState(null);
+            const [editFolderName, setEditFolderName] = React.useState("");
+
+            const [editFileIndex, setEditFileIndex] = React.useState(null);
+            const [editFileName, setEditFileName] = React.useState("");
+
+            const [selectedItemType, setSelectedItemType] = React.useState(null);
+            const [selectedIndex, setSelectedIndex] = React.useState(null);
+
+            const addFolder = () => {
+                if (folderName !== "") {
+                    setFolders([...folders, folderName]);
+                    setFolderName("");
+                }
+            };
+
+            const addFile = () => {
+                if (fileName !== "") {
+                    setFiles([...files, fileName]);
+                    setFileName("");
+                }
+            };
+
+            const startEditFolder = (index) => {
+                setEditFolderIndex(index);
+                setEditFolderName(folders[index]);
+                new window.bootstrap.Modal(document.getElementById("EditFolder")).show();
+            };
+
+            const saveEditFolder = () => {
+                if (editFolderName !== "" && editFolderIndex !== null) {
+                const newFolders = [...folders];
+                newFolders[editFolderIndex] = editFolderName;
+                setFolders(newFolders);
+                setEditFolderIndex(null);
+                setEditFolderName("");
+                }
+            };
+
+            const startEditFile = (index) => {
+                setEditFileIndex(index);
+                setEditFileName(files[index]);
+                new window.bootstrap.Modal(document.getElementById("EditFile")).show();
+            };
+
+            const saveEditFile = () => {
+                if (editFileName !== "" && editFileIndex !== null) {
+                const newFiles = [...files];
+                newFiles[editFileIndex] = editFileName;
+                setFiles(newFiles);
+                setEditFileIndex(null);
+                setEditFileName("");
+                }
+            };
+
+            return (
+                <div className="wrapper">
+                    <div className="row">
+                        <div className="col-2">
+                            <div className="logo d-flex justify-content-center mx-3 my-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="black" className="bi bi-cloud-arrow-up-fill" viewBox="0 0 20 20">
+                                    <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0z" />
+                                </svg>
+                                <h2>Drive App</h2>
+                            </div>
+                            <div className="d-flex flex-column gap-3">
+                                <button className="btn btn-light p-3" data-bs-toggle="modal" data-bs-target="#BuatFolder">+ Buat Folder</button>
+                                <button className="btn btn-light p-3" data-bs-toggle="modal" data-bs-target="#BuatFile">+ Buat File</button>
+                            </div>
+                        </div>
+
+                        <div className="col-10">
+                            <div className="navigation mx-5 mt-5">
+                                <div className="row my-3">
+                                    <div className="col-3 d-flex gap-4">
+                                        <button
+                                            className="btn btn-primary px-4"
+                                            onClick={() => {
+                                                if (selectedItemType === "folder" && selectedIndex !== null) {
+                                                    startEditFolder(selectedIndex);
+                                                } else if (selectedItemType === "file" && selectedIndex !== null) {
+                                                    startEditFile(selectedIndex);
+                                                }
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+
+                                        <button
+                                            className="btn btn-primary px-4"
+                                            onClick={() => {
+                                                if (selectedItemType === "folder" && selectedIndex !== null) {
+                                                const newFolders = folders.filter((_, i) => i !== selectedIndex);
+                                                setFolders(newFolders);
+                                                setSelectedItemType(null);
+                                                setSelectedIndex(null);
+                                                } else if (selectedItemType === "file" && selectedIndex !== null) {
+                                                const newFiles = files.filter((_, i) => i !== selectedIndex);
+                                                setFiles(newFiles);
+                                                setSelectedItemType(null);
+                                                setSelectedIndex(null);
+                                                }
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </div>
+                                    <div className="col-9"></div>
+                                </div>
+                            </div>
+                            <div className="isi py-3 px-5">
+                                <div className="d-flex flex-column">
+                                    {folders.map((name, index) => (
+                                        <div key={index} className="p-3">
+                                            <div className="list-group">
+                                                <a
+                                                    href="#"
+                                                    className={`list-group-item list-group-item-action list-group-item-warning py-3 ${selectedItemType === 'folder' && selectedIndex === index ? 'active' : ''}`}
+                                                    onClick={() => {
+                                                        setSelectedItemType("folder");
+                                                        setSelectedIndex(index);
+                                                    }}
+                                                >
+                                                    {name}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {files.map((name, index) => (
+                                        <div key={index} className="p-3">
+                                            <div className="list-group">
+                                                <div className="row">
+                                                    <div className="col-1"></div>
+                                                    <div className="col-11">
+                                                        <a
+                                                            href="#"
+                                                            className={`list-group-item list-group-item-action py-3 ${selectedItemType === 'file' && selectedIndex === index ? 'active' : ''}`}
+                                                            onClick={() => {
+                                                                setSelectedItemType("file");
+                                                                setSelectedIndex(index);
+                                                            }}
+                                                        >
+                                                            {name}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ModalFolder
+                        folderName={folderName}
+                        setFolderName={setFolderName}
+                        onSave={addFolder}
+                    />
+                    <ModalFile
+                        fileName={fileName}
+                        setFileName={setFileName}
+                        onSave={addFile}
+                    />
+                    <ModalEditFolder
+                        folderName={editFolderName}
+                        setFolderName={setEditFolderName}
+                        onSave={saveEditFolder}
+                    />
+                    <ModalEditFile
+                        fileName={editFileName}
+                        setFileName={setEditFileName}
+                        onSave={saveEditFile}
+                    />
+                </div>
+            );
+        }
+
+        root.render(<App />);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>    
+</body>
+</html>
